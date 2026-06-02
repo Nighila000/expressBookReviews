@@ -60,4 +60,4 @@ public_users.get('/title/:title', async (req, res) => {
     }
 });
 
-module.exports = public_users;
+module.exports.general = public_users;
