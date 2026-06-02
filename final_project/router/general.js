@@ -1,5 +1,5 @@
 
-module.exports.general = public_users;const express = require('express');
+module.exports = public_users;;const express = require('express');
 const axios = require('axios');
 
 const public_users = express.Router();
