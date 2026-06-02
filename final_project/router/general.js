@@ -1,45 +1,63 @@
 const express = require('express');
+const axios = require('axios');
 
 const public_users = express.Router();
 
-// Sample dataset (since /books API doesn't exist)
-let books = {
-    1: { "author": "Chinua Achebe", "title": "Things Fall Apart" },
-    2: { "author": "Hans Christian Andersen", "title": "Fairy tales" },
-    3: { "author": "Dante Alighieri", "title": "The Divine Comedy" },
-    4: { "author": "Unknown", "title": "Book Four" }
-};
+const BASE_URL = "http://localhost:5000/books";
 
 // TASK 10 - Get all books
-public_users.get('/', (req, res) => {
-    res.json(books);
+public_users.get('/', async (req, res) => {
+    try {
+        const response = await axios.get(`${BASE_URL}`);
+        res.status(200).json(response.data);
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching all books" });
+    }
 });
 
 // TASK 11 - Get by ISBN
-public_users.get('/isbn/:isbn', (req, res) => {
-    res.json(books[req.params.isbn] || {});
+public_users.get('/isbn/:isbn', async (req, res) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/isbn/${req.params.isbn}`);
+
+        if (!response.data) {
+            return res.status(404).json({ message: "Book not found" });
+        }
+
+        res.status(200).json(response.data);
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching book by ISBN" });
+    }
 });
 
 // TASK 12 - Get by Author
-public_users.get('/author/:author', (req, res) => {
-    let result = {};
-    Object.keys(books).forEach(key => {
-        if (books[key].author === req.params.author) {
-            result[key] = books[key];
+public_users.get('/author/:author', async (req, res) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/author/${req.params.author}`);
+
+        if (!response.data) {
+            return res.status(404).json({ message: "Author not found" });
         }
-    });
-    res.json(result);
+
+        res.status(200).json(response.data);
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching books by author" });
+    }
 });
 
 // TASK 13 - Get by Title
-public_users.get('/title/:title', (req, res) => {
-    let result = {};
-    Object.keys(books).forEach(key => {
-        if (books[key].title === req.params.title) {
-            result[key] = books[key];
+public_users.get('/title/:title', async (req, res) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/title/${req.params.title}`);
+
+        if (!response.data) {
+            return res.status(404).json({ message: "Title not found" });
         }
-    });
-    res.json(result);
+
+        res.status(200).json(response.data);
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching books by title" });
+    }
 });
 
 module.exports = public_users;
